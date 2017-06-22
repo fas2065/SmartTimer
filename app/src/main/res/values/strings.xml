@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">SmartTimer</string>
+    <string name="action_settings">Settings</string>
+    <string name="add_interval">Add Interval</string>
+    <string name="add_program">Add Interval</string>
+    <string name="title_interval_detail">Interval Detail</string>
+    <string name="name">Name</string>
+    <string name="enter_porgram_name_here">Enter Program Name Here</string>
+</resources>
