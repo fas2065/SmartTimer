@@ -16,7 +16,8 @@
         </activity>
         <activity
             android:name=".ProgramActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.rasco.dev.smarttimer.MainActivity" />

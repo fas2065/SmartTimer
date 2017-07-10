@@ -27,10 +27,9 @@ public class ProgramAdapter extends ArrayAdapter<Program> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_program, parent, false);
         }
         // Lookup view for data population
-        TextView programId = (TextView) convertView.findViewById(R.id.program_id);
         TextView programName = (TextView) convertView.findViewById(R.id.program_name);
         // Populate the data into the template view using the data object
-        programId.setText(program.get_id());
+        //programId.setText(program.get_id());
         programName.setText(program.getName());
         // Return the completed view to render on screen
         return convertView;

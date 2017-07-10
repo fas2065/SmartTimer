@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(),ProgramActivity.class);
 
-                int programId = programClicked.get_id();
+                String programId = programClicked.get_id() + "";
                 intent.putExtra("id", programId);
                 //based on item add info to intent
                 startActivity(intent);

@@ -14,31 +14,32 @@ import java.util.ArrayList;
 
 public class Controller {
 
-    private static Controller instance = null;
-
-
+    ProgramDB programDB;
     Context context;
-    ArrayList<Program> programs;
+
+    private static class Loader {
+        static volatile Controller INSTANCE = new Controller();
+    }
+
+    public Controller() {
+        programDB = new ProgramDB(context, null, null, 1);
+    }
 
     public Controller(Context context) {
         this.context = context;
+        programDB = new ProgramDB(context, null, null, 1);
     }
 
     public static Controller getInstance(Context context) {
-        if (instance == null) {
-            instance = new Controller(context);
-        }
-        return instance;
+        Loader.INSTANCE.context = context;
+        return Loader.INSTANCE;
     }
 
     public ArrayList<Program> getAllPrograms() {
-        ProgramDB programDB = new ProgramDB(context, null, null, 1);
-        programs = programDB.getAllPrograms();
-        return programs;
+        return programDB.getAllPrograms();
     }
 
     public Program getProgram(int id) {
-        ProgramDB programDB = new ProgramDB(context, null, null, 1);
         Program program = programDB.getProgram(id);
 
         IntervalDB intervalDB = new IntervalDB(context, null, null, 1);
@@ -47,6 +48,11 @@ public class Controller {
     }
 
     public void addProgram(Program program) {
+        programDB.addProgram(program);
 
+    }
+
+    public void deleteProgram(Program program) {
+        programDB.deleteProgram(program);
     }
 }

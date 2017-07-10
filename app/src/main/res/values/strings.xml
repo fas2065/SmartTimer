@@ -5,5 +5,8 @@
     <string name="add_program">Add Interval</string>
     <string name="title_interval_detail">Interval Detail</string>
     <string name="name">Name</string>
-    <string name="enter_porgram_name_here">Enter Program Name Here</string>
+    <string name="enter_program_name_here">Enter Program Name Here</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
 </resources>

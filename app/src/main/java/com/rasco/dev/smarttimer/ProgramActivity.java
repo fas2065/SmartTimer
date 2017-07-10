@@ -1,10 +1,12 @@
 package com.rasco.dev.smarttimer;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -21,24 +23,18 @@ import com.rasco.dev.smarttimer.controller.Controller;
 
 public class ProgramActivity extends AppCompatActivity {
 
-    final static String TAG = "MY LOGS:   ";
+    final static String TAG = "MY LOGS: ";
     State programState;
     View recyclerView;
-    Toolbar toolbar;
-
-    private Program program;
-    private boolean mTwoPane;
-
     SimpleItemRecyclerAdapter adapter;
-
     EditText programNameEdit;
     TextView programNameView;
-
+    FloatingActionButton fab;
     MenuItem editMenuItem;
     MenuItem saveMenuItem;
     MenuItem deleteMenuItem;
-    MenuItem searchMenuItem;
-
+    private Program program;
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,23 +47,25 @@ public class ProgramActivity extends AppCompatActivity {
 
         programNameEdit = (EditText) findViewById(R.id.editTextProgName);
         programNameView = (TextView) findViewById(R.id.programNameView);
-        editMenuItem = (MenuItem) findViewById(R.id.app_bar_edit);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
         Intent intent = getIntent();
+        intent.getStringExtra("id");
         if (null != intent.getStringExtra("id")){
             int id = Integer.valueOf(intent.getStringExtra("id"));
             program = new Controller(this).getProgram(id);
             programState = State.VIEW;
-            uiViewProgram();
+            uiViewProgram(program);
         } else {
             program = new Program();
             programState = State.NEW;
-            uiNewProgram();
+            uiNewProgram(program);
         }
-
         recycleView();
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+    private void recycleView() {
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,9 +74,6 @@ public class ProgramActivity extends AppCompatActivity {
                 addNewInterval();
             }
         });
-    }
-
-    private void recycleView() {
         recyclerView = findViewById(R.id.interval_list);
         assert recyclerView != null;
         setupRecyclerView((RecyclerView) recyclerView);
@@ -94,34 +89,35 @@ public class ProgramActivity extends AppCompatActivity {
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         adapter = new SimpleItemRecyclerAdapter(program.getIntervals(), mTwoPane, getSupportFragmentManager());
         recyclerView.setAdapter(adapter);
+        this.invalidateOptionsMenu();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.program_menu, menu);
+        editMenuItem = menu.findItem(R.id.app_bar_edit);
+        saveMenuItem = menu.findItem(R.id.app_bar_save);
+        deleteMenuItem = menu.findItem(R.id.app_bar_delete);
+
         switch(programState){
             case EDIT:
-                menu.removeItem(R.id.app_bar_edit);
-                menu.removeItem(R.id.app_bar_search);
+                editMenuItem.setVisible(false);
+                deleteMenuItem.setVisible(true);
                 break;
             case NEW:
-                menu.removeItem(R.id.app_bar_edit);
-                menu.removeItem(R.id.app_bar_search);
-                menu.removeItem(R.id.app_bar_delete);
+                editMenuItem.setVisible(false);
+                deleteMenuItem.setVisible(false);
                 break;
             case VIEW:
-                menu.removeItem(R.id.app_bar_save);
-                menu.removeItem(R.id.app_bar_search);
+                saveMenuItem.setVisible(false);
+                deleteMenuItem.setVisible(true);
                 break;
             default:
-                menu.removeItem(R.id.app_bar_save);
-                menu.removeItem(R.id.app_bar_search);
+                saveMenuItem.setVisible(false);
                 break;
         }
-        inflater.inflate(R.menu.program_menu, menu);
-
-
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -132,33 +128,63 @@ public class ProgramActivity extends AppCompatActivity {
         } else if (itemId == R.id.app_bar_edit) {
             uiEditProgram();
         } else if (itemId == R.id.app_bar_delete) {
-            deleteProgram();
+            alertDelete();
         }
-//        else if (itemId == R.id.app_bar_search) {
-//            uiEditProgram();
-//        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void uiNewProgram() {
+    private void uiNewProgram(Program program) {
         programNameEdit.setVisibility(View.VISIBLE);
         programNameView.setVisibility(View.GONE);
+        fab.setVisibility(View.VISIBLE);
+
     }
 
     private void uiEditProgram() {
         programNameEdit.setVisibility(View.GONE);
         programNameView.setVisibility(View.VISIBLE);
+        programNameView.setText(program.getName());
+        fab.setVisibility(View.VISIBLE);
+        programState = State.EDIT;
+        recycleView();
     }
 
-    private void uiViewProgram() {
+    private void uiViewProgram(Program program) {
         programNameEdit.setVisibility(View.GONE);
         programNameView.setVisibility(View.VISIBLE);
-
+        programNameView.setText(program.getName());
+        fab.setVisibility(View.GONE);
     }
 
     private void deleteProgram() {
+        Controller.getInstance(this).deleteProgram(program);
+        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(mainIntent);
+    }
 
+    private void saveProgram() {
+        program = new Program(programNameEdit.getText().toString().trim());
+        Controller.getInstance(this).addProgram(program);
+        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(mainIntent);
+    }
+
+    private void alertDelete() {
+        new AlertDialog.Builder(this)
+                .setTitle("Deleting Program")
+                .setMessage("Do you want to delete the " + program.getName() + " program?")
+                .setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Do nothing
+                    }
+                }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                deleteProgram();
+            }
+        }).show();
     }
 
     private void addNewInterval() {
@@ -170,26 +196,6 @@ public class ProgramActivity extends AppCompatActivity {
 //        Program.removeInterval(id);
         setupRecyclerView((RecyclerView) recyclerView);
     }
-
-    private boolean saveProgram() {
-        return true;
-    }
-
-//    new AlertDialog.Builder(this)
-//            .setTitle("Metaphorical Sandwich Dialog")
-//    .setMessage("Metaphorical message to please use the spicy mustard.")
-//    .setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
-//        @Override public void onClick(DialogInterface dialogInterface, int i) {
-//            // "No thanks" button was clicked
-//        }
-//    })
-//            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//        @Override public void onClick(DialogInterface dialogInterface, int i) {
-//            // "OK" button was clicked
-//        }
-//    })
-//            .show();
-
 
     public enum State {
         EDIT, VIEW, NEW

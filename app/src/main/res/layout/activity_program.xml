@@ -15,15 +15,15 @@
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="403dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
 
         <include layout="@layout/interval_list" />
     </FrameLayout>
@@ -35,12 +35,11 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
-        android:layout_marginRight="8dp"
-        app:backgroundTint="@android:color/holo_orange_dark"
+        android:layout_marginEnd="8dp"
+        app:backgroundTint="@android:color/holo_blue_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:layout_marginEnd="8dp" />
+        app:srcCompat="@android:drawable/ic_input_add" />
 
     <TextView
         android:id="@+id/programNameView"
@@ -65,9 +64,9 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:hint="@string/enter_program_name_here"
         android:inputType="textPersonName"
-        android:hint="@string/enter_porgram_name_here"
-        android:textAppearance="@android:style/TextAppearance.Material.Medium.Inverse"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
         app:layout_constraintBottom_toTopOf="@+id/frameLayout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
